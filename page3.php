@@ -1,3 +1,4 @@
+<?php session_start();?>
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -35,11 +36,18 @@ if ($_SERVER["REQUEST_METHOD"]==="POST"){
     if(empty($_POST["name"])){
         $nameErr = "Заполните имя";
     }
+    elseif (isset($_COOKIE['name'])){
+        $name = test_inputN($_COOKIE['name']);
+    }
     else{
         $name = test_inputN($_POST["name"]);
     }
+
     if(empty($_POST["login"])){
         $loginErr = "Заполните логин";
+    }
+    elseif (isset($_COOKIE['login'])){
+        $login = test_inputL($_COOKIE['login']);
     }
     else{
         $login = test_inputL($_POST["login"]);
@@ -63,22 +71,19 @@ if ($_SERVER["REQUEST_METHOD"]==="POST"){
 function test_inputN($name) {
     $name = trim($name);
     $name = htmlspecialchars($name);
-    $pattern = '/^[A-Z]{1}[A-Za-z]*$/';
+    $pattern = '/^[A-Za-z]*$/';
     if (preg_match($pattern,$name,$matches[0])){
-        echo "<pre>";
-        print_r($matches);
-        echo "<pre>";
+        setcookie('name', $name, time()+7200);
         return $name;
     }
 }
 function test_inputL($login) {
+
     $login = trim($login);
     $login = htmlspecialchars($login);
     $pattern = '/^[A-Za-z0-9_]{1,15}$/';
     if (preg_match($pattern,$login,$matches[0])){
-        echo "<pre>";
-        print_r($matches);
-        echo "<pre>";
+        setcookie('login', $login, time()+7200);
         return $login;
     }
     else{
@@ -90,6 +95,7 @@ function test_inputP($pass) {
     $pass = htmlspecialchars($pass);
     $pattern = '/^[A-Za-z0-9_\}\{\[\]\(\)-]{1,8}$/';
     if (preg_match($pattern,$pass)){
+        setcookie('password', $pass, time()+7200);
         return $pass;
     }
 }
@@ -98,6 +104,7 @@ function test_inputM($mail) {
     $mail = htmlspecialchars($mail);
     $pattern = '/^[A-Za-z0-9_]*@[A-Za-z0-9_]*\.[A-Za-z0-9_]*$/';
     if (preg_match($pattern,$mail)){
+        setcookie('email', $mail, time()+7200);
         return $mail;
     }
 }
@@ -133,8 +140,7 @@ echo "<br>";
 echo $mail;
 echo "<br>";
 echo $password;
-echo "<br>";
-echo $comment;
+
 echo "<br>";
 ?>
 </body>
